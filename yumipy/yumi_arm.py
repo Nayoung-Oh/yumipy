@@ -596,7 +596,7 @@ class YuMiArm:
         for state in traj:
             self.goto_state(state, wait_for_res=wait_for_res)
 
-    def goto_pose_shortest_path(self, pose, wait_for_res=True, plan_timeout=0.1):
+    def goto_pose_shortest_path(self, pose, wait_for_res=True, plan_timeout=0.1, shorten=False):
         """ Go to a pose via the shortest path in joint space """
         if self._motion_planner is None:
             raise ValueError('Motion planning not enabled')
@@ -604,7 +604,7 @@ class YuMiArm:
         current_state = self.get_state()
         current_pose = self.get_pose().as_frames('gripper', 'world')
         traj = self._motion_planner.plan_shortest_path(current_state, current_pose,
-                                                       pose, timeout=plan_timeout)
+                                                       pose, timeout=plan_timeout, shorten=shorten)
         if traj is None:
             return
         for state in traj:
@@ -946,7 +946,7 @@ class YuMiArm:
         '''
         if force < 0 or force > YMC.MAX_GRIPPER_FORCE:
             raise ValueError("Gripper force can only be between {} and {}. Got {}.".format(0, YMC.MAX_GRIPPER_FORCE, force))
-        if width < 0 or width > YMC>MAX_GRIPPER_WIDTH:
+        if width < 0 or width > YMC.MAX_GRIPPER_WIDTH:
             raise ValueError("Gripper width can only be between {} and {}. Got {}.".format(0, YMC.MAX_GRIPPER_WIDTH, width))
 
         width = METERS_TO_MM * width
